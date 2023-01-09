@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Website</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <main>
+      
+      <script src="scripts/pynetworktables2js/networktables.js"></script>
+
+      <script src="scripts/jQuery/jquery-3.6.3.min.js"></script>
+
+      <script src="scripts/nav.js"></script>
+
+      <div>
+        NetworkTables websocket: <span id="connectstate">Unknown state</span><br/>
+        <!--Drop down menu to select network table "display"-->
+        <div class="dropdown">
+          <button class="dropbtn">Select Display Level</button>
+          <div class="dropdown-content">
+              <button id="compmode-btn" onclick="switchDisplayMode('comp')">Competition</button>
+              <button id="debugmode-btn" onclick="switchDisplayMode('debug')">Debug (All)</button>
+          </div>
+        </div>
+          <!--In javascript, populate with buttons for each network table key, then create a "frame" on page-->
+        <div class="dropdown">
+          <button onmouseover="myFunction()" onmouseleave="myFunction()"class="dropbtn">Dropdown</button>
+          <div id="myDropdown" class="dropdown-content">
+            <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+          </div>
+        </div>
+        <button class="functionalButton" id="submitLayout" onclick="saveCurrentLayout()">Save Current Layout?</button>
+      </div>
+      <table id="nt" border=1>
+        <tbody></tbody>
+        </table>
+    </main>
+    <script src="scripts/nt.js"></script>
+  </body>
+</html>

@@ -1,0 +1,140 @@
+:root {
+    --font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background-color: white;
+}
+
+
+.button {
+    margin: 0px 15px;
+    border: none;
+    padding: 12px 60px;
+    text-align: center;
+    font-size: var(--font-size);
+    background-color: darkgreen;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color:blueviolet;
+}
+
+#nav-bar {
+    width:auto;
+    height:75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color:green;
+    overflow: hidden;
+}
+
+#settings-button {
+    background-color: white;
+    background-image: url(media/Gear.png);
+    background-size: 60px;
+    background-position-x: -4px;
+    background-position-y: -4px;
+    border-radius: 50%;
+    width:30px;
+    height:30px;
+    padding: 26px 26px;
+}
+
+#settings-button:hover {
+    background-color: grey;
+}
+
+/*Default display mode for all elements will be hidden, unless specified*/
+#nt {
+    display: none;
+}
+
+.functionalButton {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.functionalButton:hover {
+    background-color: #3e8e41;
+}
+
+/*Dropdown display mode selector*/
+/* Dropdown Button */
+.dropbtn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+  
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+  
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    width: 320px;
+    height: 400px;
+    overflow-y: scroll;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content button {
+    color: black;
+    flex: 1;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+  
+/* Change color of dropdown links on hover */
+.dropdown-content button:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:flex;}
+
+.draggablecontent {
+    position: relative;
+    min-width: 160px;
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid #d3d3d3;
+    z-index: 9;
+}
+
+.draggableheader {
+    position: absolute;
+    min-width: 160px;
+    cursor: move;
+    background-color: #026c45;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    z-index: 10;
+}
