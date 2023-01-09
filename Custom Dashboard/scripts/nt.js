@@ -1,3 +1,8 @@
+//when page loads, automatically go to competition mode
+switchDisplayMode("comp");
+
+
+//below to other comment is all pynetworktables2js
 // sets a function that will be called when the websocket connects/disconnects
 NetworkTables.addWsConnectionListener(onNetworkTablesConnection, true);
 	
@@ -49,6 +54,7 @@ function onValueChanged(key, value, isNew) {
 	updateDashboard(key, value);
 }
 
+/// @TODO: make sure this can work with all widget types once that feature is added
 function updateDashboard(key, value)
 {
 	if(document.getElementById(key + "-Content"))
@@ -85,8 +91,7 @@ function populateSelectionDropdown()
 			const node = document.createElement("button");
 			const textnode = document.createTextNode(fields[i].textContent);
 			node.appendChild(textnode);
-			node.onclick = addToDashboard.bind(this, fields[i].textContent, fields[i+1].textContent);
-			
+			node.onclick = addToDashboard.bind(this, fields[i].textContent);
 			dropDown.appendChild(node);
 			
 		}
@@ -108,6 +113,8 @@ function myFunction() {
 	populated = true;
   }
   
+  /// @TODO: Filter function runs on mouse over and will filter out entries that are already out on the dashboard
+
   function filterFunction() {
 	var input, filter, ul, li, a, i;
 	input = document.getElementById("myInput");
@@ -122,26 +129,6 @@ function myFunction() {
 		a[i].style.display = "none";
 	  }
 	}
-}
-
-function addToDashboard(thisValue, nextValue)
-{
-	const node = document.createElement("div");
-	const textnode = document.createTextNode(thisValue);
-	node.className = "draggableheader";
-	node.id = thisValue + "-Header";
-	node.appendChild(textnode);
-
-	const contentNode = document.createElement("div");
-	contentNode.className = "draggablecontent";
-	contentNode.id = thisValue + "-Content";
-	const contentText = document.createTextNode(nextValue);
-	contentNode.appendChild(contentText);
-	node.appendChild(contentNode);
-
-	document.body.appendChild(node);
-
-	dragElement(node);
 }
 
 function dragElement(elmnt) {
@@ -184,10 +171,15 @@ function saveCurrentLayout()
 	const currentWidgets = document.getElementsByClassName("draggableheader");
 	for(let cW of currentWidgets)
 	{
+		//check if we have already declared this entry in localStorage
+		//if statement checks if its a "new" entry being added
+		//otherwise, we can use the id of the div as the "prefix" to the web storage key
+		
 		//Webstore standard only supports string
 		localStorage.setItem(cW.id+"::ShowDefault", "true");
 		localStorage.setItem(cW.id+"::XPos", cW.style.left);
 		localStorage.setItem(cW.id+"::YPos", cW.style.top);
+		localStorage.setItem(cW.id+"::WidgetType", cW.dataset.widgetType);
 	}
 }
 
@@ -196,35 +188,74 @@ function populateDefaults()
 	for(let i = 0; i < localStorage.length; i++)
 	{
 		var currentKey = localStorage.key(i);
-		console.log(currentKey);
 		if(currentKey.includes("::ShowDefault"))
 		{
 			var header = currentKey.substring(0, currentKey.length-13);
-			populateSpecificWidget(header);
+			addToDashboard(header);
 		}
 	}
 }
 
-function populateSpecificWidget(header)
+function addToDashboard(header)
 {
-	//Create div with top and left being the x and y pos, get network table key
-	const node = document.createElement("div");
-	const textnode = document.createTextNode(header);
-	node.className = "draggableheader";
-	node.id = header + "-Header";
-	node.style.top = localStorage.getItem(header+"::YPos");
-	node.style.left = localStorage.getItem(header+"XPos");
-	node.style.position = "absolute"
-	node.appendChild(textnode);
+	//Make sure we don't duplicate entries
+	if(!document.getElementById(header))
+	{
+		//Create div with top and left being the x and y pos, get network table key
+		const node = document.createElement("div");
+		const textnode = document.createTextNode(header);
+		node.className = "draggableheader";
+		node.id = header;
+		node.dataset.widgetType = localStorage.getItem(header+"::WidgetType");
+		node.style.top = localStorage.getItem(header+"::YPos");
+		node.style.left = localStorage.getItem(header+"::XPos");
+		node.appendChild(textnode);
 
-	const contentNode = document.createElement("div");
-	contentNode.className = "draggablecontent";
-	contentNode.id = header + "-Content";
-	const contentText = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
-	contentNode.appendChild(contentText);
-	node.appendChild(contentNode);
+		var contentChild;
 
-	document.body.appendChild(node);
+		/// @TODO: determine type by widget type first, if not, then fallback onto network table value
 
-	dragElement(node);
+		if(localStorage.getItem(header+"::WidgetType"))
+		{
+			//Add widget functionality based on data type, will be determined when first constructing the widget
+			switch(localStorage.getItem(header+"::WidgetType"))
+			{
+				case "text":
+					contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+					console.log("text");
+					break;
+				case "button":
+					contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+					contentChild = document.createElement("button");
+					contentChild.textContent = NetworkTables.getValue(header, "Default Value");
+					console.log("button");
+					break;
+				case "input":
+					console.log("input");
+				default:
+					console.log("default");
+					break;
+			}
+		}
+		else //default case if the widget isnt in the saved layout
+		{
+			contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+		}
+
+		const contentNode = document.createElement("div");
+		contentNode.className = "draggablecontent";
+		contentNode.id = header + "-Content";
+		
+		contentNode.appendChild(contentChild);
+		node.appendChild(contentNode);
+
+		document.body.appendChild(node);
+
+		dragElement(node);
+	}
+}
+
+function testFunc()
+{
+	console.log("Hel");
 }

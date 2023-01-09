@@ -124,7 +124,7 @@ body{
     text-align: center;
     font-size: 16px;
     border: 1px solid #d3d3d3;
-    z-index: 9;
+    z-index: 0;
 }
 
 .draggableheader {
@@ -136,5 +136,5 @@ body{
     padding: 10px;
     font-size: 16px;
     border: none;
-    z-index: 10;
+    z-index: -1;
 }
