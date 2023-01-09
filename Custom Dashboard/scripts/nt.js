@@ -208,4 +208,23 @@ function populateDefaults()
 function populateSpecificWidget(header)
 {
 	//Create div with top and left being the x and y pos, get network table key
+	const node = document.createElement("div");
+	const textnode = document.createTextNode(header);
+	node.className = "draggableheader";
+	node.id = header + "-Header";
+	node.style.top = localStorage.getItem(header+"::YPos");
+	node.style.left = localStorage.getItem(header+"XPos");
+	node.style.position = "absolute"
+	node.appendChild(textnode);
+
+	const contentNode = document.createElement("div");
+	contentNode.className = "draggablecontent";
+	contentNode.id = header + "-Content";
+	const contentText = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+	contentNode.appendChild(contentText);
+	node.appendChild(contentNode);
+
+	document.body.appendChild(node);
+
+	dragElement(node);
 }
