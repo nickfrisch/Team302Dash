@@ -116,11 +116,11 @@ body{
 .show {display:flex;}
 
 .draggablecontent {
-    position: relative;
+    position: absolute;
     min-width: 160px;
     background-color: #04AA6D;
     color: white;
-    padding: 16px;
+    padding: 8px;
     text-align: center;
     font-size: 16px;
     border: 1px solid #d3d3d3;
@@ -128,8 +128,8 @@ body{
 }
 
 .draggableheader {
-    position: absolute;
     min-width: 160px;
+    margin-bottom: 10px;
     cursor: move;
     background-color: #026c45;
     color: white;

@@ -133,8 +133,10 @@ function myFunction() {
 
 function dragElement(elmnt) {
 	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-	elmnt.onmousedown = dragMouseDown;
-  
+
+	//The reason for takinga substring is to remove -Content from the id to get the "header" child div
+	document.getElementById(elmnt.id.substring(0,elmnt.id.length-8)).onmousedown = dragMouseDown;
+
 	function dragMouseDown(e) {
 	  e = e || window.event;
 	  e.preventDefault();
@@ -206,9 +208,6 @@ function addToDashboard(header)
 		const textnode = document.createTextNode(header);
 		node.className = "draggableheader";
 		node.id = header;
-		node.dataset.widgetType = localStorage.getItem(header+"::WidgetType");
-		node.style.top = localStorage.getItem(header+"::YPos");
-		node.style.left = localStorage.getItem(header+"::XPos");
 		node.appendChild(textnode);
 
 		var contentChild;
@@ -221,8 +220,13 @@ function addToDashboard(header)
 			switch(localStorage.getItem(header+"::WidgetType"))
 			{
 				case "text":
-					contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
-					console.log("text");
+					//contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+					//console.log("text");
+					contentChild = document.createElement("input");
+					contentChild.type = "text";
+					contentChild.value = "Hello World";
+					contentChild.id = header+"-Input";
+					// contentChild.setAttribute('tabindex', '1');
 					break;
 				case "button":
 					contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
@@ -239,23 +243,67 @@ function addToDashboard(header)
 		}
 		else //default case if the widget isnt in the saved layout
 		{
-			contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+			//contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+			contentChild = document.createElement("input");
+			contentChild.type = "text";
+			contentChild.value = "Hello World";
 		}
 
 		const contentNode = document.createElement("div");
 		contentNode.className = "draggablecontent";
 		contentNode.id = header + "-Content";
-		
+		contentNode.dataset.widgetType = localStorage.getItem(header+"::WidgetType");
+		contentNode.style.top = localStorage.getItem(header+"::YPos");
+		contentNode.style.left = localStorage.getItem(header+"::XPos");
+
+		contentNode.appendChild(node);
 		contentNode.appendChild(contentChild);
-		node.appendChild(contentNode);
 
-		document.body.appendChild(node);
+		document.body.appendChild(contentNode);
 
-		dragElement(node);
+		dragElement(contentNode);
+		contentNode.addEventListener('contextmenu', function(e) {
+			//alert("You've tried to open context menu"); //here you draw your own menu
+      		e.preventDefault();
+			showWidgetMenu(e);
+		}, false);
 	}
 }
 
-function testFunc()
+function showWidgetMenu(mouseEvent)
 {
-	console.log("Hel");
+
+	const node = document.createElement("div");
+	node.style.top = mouseY(mouseEvent) + "px";
+	node.style.left = mouseX(mouseEvent) + "px"
+	node.id= "contextMenu";
+	node.className = "draggablecontent";
+	
+	const testNode = document.createTextNode("Hell World");
+	node.appendChild(testNode);
+	document.body.appendChild(node);
+
+	function mouseX(evt) {
+		if (evt.pageX) {
+		  return evt.pageX;
+		} else if (evt.clientX) {
+		  return evt.clientX + (document.documentElement.scrollLeft ?
+			document.documentElement.scrollLeft :
+			document.body.scrollLeft);
+		} else {
+		  return null;
+		}
+	  }
+	  
+	  function mouseY(evt) {
+		if (evt.pageY) {
+		  return evt.pageY;
+		} else if (evt.clientY) {
+		  return evt.clientY + (document.documentElement.scrollTop ?
+			document.documentElement.scrollTop :
+			document.body.scrollTop);
+		} else {
+		  return null;
+		}
+	  }
 }
