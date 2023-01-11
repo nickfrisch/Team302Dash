@@ -9,10 +9,7 @@ function updateDashboard(key, value)
 		switch (document.getElementById(key + "-Content").dataset.widgetType)
 		{
 			case "text":
-				document.getElementById(key + "-Text").textContent = value;
-				break;
-			case "button":
-				document.getElementById(key + "-Button").textContent = value;
+				document.getElementById(key + "-Content").textContent = value;
 				break;
 			case "input":
 				document.getElementById(key + "-Input").value = value;
@@ -89,6 +86,7 @@ function populateDefaults()
 
 function addToDashboard(header)
 {
+	//Make sure we don't duplicate entries
 	if(!document.getElementById(header))
 	{
 		//Create div with top and left being the x and y pos, get network table key
@@ -99,68 +97,72 @@ function addToDashboard(header)
 		node.appendChild(textnode);
 
 		var contentChild;
-		var entryType = "text";
+		var entryType = "input";
 
-		//If widget to be added is saved, use localStorage value for widget type
-		if(localStorage.getItem(header+"::ShowDefault"))
+		/// @TODO: determine type by widget type first, if not, then fallback onto network table value
+
+		if(localStorage.getItem(header+"::WidgetType"))
 		{
+			//Add widget functionality based on data type, will be determined when first constructing the widget
 			switch(localStorage.getItem(header+"::WidgetType"))
 			{
-				
-				case "button":
-					contentChild = document.createElement("button");
-					contentChild.textContent = NetworkTables.getValue(header, "Default Value");
-					contentChild.id = header+"-Button";
-					entryType = "button";
-					break;
-				case "input":
+				case "text":
+					//contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+					//console.log("text");
 					contentChild = document.createElement("input");
 					contentChild.type = "text";
+					contentChild.value = "Hello World";
 					contentChild.id = header+"-Input";
 					entryType = "input";
 					contentChild.addEventListener("keydown", (e) => {
 						if (e.key === "Enter"){
 							setEntryValue(e.target.value, header);
+							console.log("setEntryValue");
 						}
 					});
-				case "text":
-					contentChild = document.createElement("p");
-					contentChild.textContent = NetworkTables.getValue(header, "Default Value");
-					contentChild.id = header+"-Text";
-					entryType = "text";
-				default:
+					// contentChild.setAttribute('tabindex', '1');
+					break;
+				case "button":
 					contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+					contentChild = document.createElement("button");
+					contentChild.textContent = NetworkTables.getValue(header, "Default Value");
+					console.log("button");
+					break;
+				case "input":
+					console.log("input");
+				default:
+					console.log("default");
 					break;
 			}
 		}
-		else //Widget is not saved, so default to text type
+		else //default case if the widget isnt in the saved layout
 		{
-			contentChild = document.createElement("p");
-			contentChild.textContent = NetworkTables.getValue(header, "Default Value");
-			contentChild.id = header+"-Text";
-			entryType = "text";
+			//contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
+			contentChild = document.createElement("input");
+			contentChild.type = "text";
+			contentChild.value = NetworkTables.getValue(header, "Default Value")
+			contentChild.id = header+"-Input";
+			contentChild.addEventListener("keydown", (e) => {
+				if (e.key === "Enter"){
+					setEntryValue(e.target.value, header);
+					console.log("setEntryValue");
+				}
+			});
 		}
 
 		const contentNode = document.createElement("div");
 		contentNode.className = "draggablecontent";
 		contentNode.id = header + "-Content";
-		contentNode.dataset.widgetType = localStorage.getItem(header+"::WidgetType") ? localStorage.getItem(header+"::WidgetType") : entryType; //If saved, set value to saved value, else use entryType
+		contentNode.dataset.widgetType = localStorage.getItem(header+"::WidgetType") ? localStorage.getItem(header+"::WidgetType") : entryType;
 		contentNode.style.top = localStorage.getItem(header+"::YPos");
 		contentNode.style.left = localStorage.getItem(header+"::XPos");
 
 		contentNode.appendChild(node);
-		if(contentChild !== undefined)
-		{
-			contentNode.appendChild(contentChild);
-		}
-		
+		contentNode.appendChild(contentChild);
 
 		document.body.appendChild(contentNode);
 
-		//Make widget draggable
 		dragElement(contentNode);
-
-		//Add support for context menu
 		contentNode.addEventListener('contextmenu', function(e) {
 			//alert("You've tried to open context menu"); //here you draw your own menu
       		e.preventDefault();
