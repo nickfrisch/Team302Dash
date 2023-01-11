@@ -59,7 +59,16 @@ function updateDashboard(key, value)
 {
 	if(document.getElementById(key + "-Content"))
 	{
-		document.getElementById(key + "-Content").textContent = value;
+		switch (document.getElementById(key + "-Content").dataset.widgetType)
+		{
+			case "text":
+				document.getElementById(key + "-Content").textContent = value;
+				break;
+			case "input":
+				document.getElementById(key + "-Input").value = value;
+		}
+
+		
 	}
 }
 //Function to switch between debug and comp mode
@@ -211,6 +220,7 @@ function addToDashboard(header)
 		node.appendChild(textnode);
 
 		var contentChild;
+		var entryType = "input";
 
 		/// @TODO: determine type by widget type first, if not, then fallback onto network table value
 
@@ -226,6 +236,13 @@ function addToDashboard(header)
 					contentChild.type = "text";
 					contentChild.value = "Hello World";
 					contentChild.id = header+"-Input";
+					entryType = "input";
+					contentChild.addEventListener("keydown", (e) => {
+						if (e.key === "Enter"){
+							setEntryValue(e.target.value, header);
+							console.log("setEntryValue");
+						}
+					});
 					// contentChild.setAttribute('tabindex', '1');
 					break;
 				case "button":
@@ -246,13 +263,20 @@ function addToDashboard(header)
 			//contentChild = document.createTextNode(NetworkTables.getValue(header, "Default Value"));
 			contentChild = document.createElement("input");
 			contentChild.type = "text";
-			contentChild.value = "Hello World";
+			contentChild.value = NetworkTables.getValue(header, "Default Value")
+			contentChild.id = header+"-Input";
+			contentChild.addEventListener("keydown", (e) => {
+				if (e.key === "Enter"){
+					setEntryValue(e.target.value, header);
+					console.log("setEntryValue");
+				}
+			});
 		}
 
 		const contentNode = document.createElement("div");
 		contentNode.className = "draggablecontent";
 		contentNode.id = header + "-Content";
-		contentNode.dataset.widgetType = localStorage.getItem(header+"::WidgetType");
+		contentNode.dataset.widgetType = localStorage.getItem(header+"::WidgetType") ? localStorage.getItem(header+"::WidgetType") : entryType;
 		contentNode.style.top = localStorage.getItem(header+"::YPos");
 		contentNode.style.left = localStorage.getItem(header+"::XPos");
 
@@ -270,9 +294,13 @@ function addToDashboard(header)
 	}
 }
 
+function setEntryValue(targetVal, header)
+{
+	NetworkTables.putValue(header, targetVal);
+}
+
 function showWidgetMenu(mouseEvent)
 {
-
 	const node = document.createElement("div");
 	node.style.top = mouseY(mouseEvent) + "px";
 	node.style.left = mouseX(mouseEvent) + "px"
