@@ -17,8 +17,6 @@ function updateDashboard(key, value)
 			case "input":
 				document.getElementById(key + "-Input").value = value;
 		}
-
-		
 	}
 }
 //Function to switch between debug and comp mode
@@ -154,7 +152,6 @@ function addToDashboard(header)
 			contentNode.appendChild(contentChild);
 		}
 		
-
 		document.body.appendChild(contentNode);
 
 		//Make widget draggable

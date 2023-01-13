@@ -77,7 +77,7 @@ function showWidgetMenu(mouseEvent)
 	node.id= "contextMenu";
 	node.className = "draggablecontent";
 	
-	const testNode = document.createTextNode("Hell World");
+	const testNode = document.createTextNode("Hello World");
 	node.appendChild(testNode);
 	document.body.appendChild(node);
 
